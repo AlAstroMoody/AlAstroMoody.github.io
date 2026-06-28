@@ -1,0 +1,207 @@
+.scene {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  padding: clamp(0.5rem, 2vh, 2rem) 0;
+}
+
+.orbit-system {
+  --orbit-size: min(92vmin, 50rem);
+  position: relative;
+  width: var(--orbit-size);
+  aspect-ratio: 1;
+}
+
+.hub {
+  position: absolute;
+  inset: 50%;
+  width: 0;
+  height: 0;
+  z-index: 2;
+}
+
+.hub__core {
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: -0.625rem 0 0 -0.625rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 24px var(--accent-glow), 0 0 48px var(--accent-glow);
+  transition: background 0.6s ease, box-shadow 0.6s ease;
+}
+
+.hub__ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  transition: border-color 0.6s ease;
+}
+
+.hub__ring--1 {
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: -1.75rem 0 0 -1.75rem;
+  animation: hub-pulse 4s ease-in-out infinite;
+}
+
+.hub__ring--2 {
+  width: 5.5rem;
+  height: 5.5rem;
+  margin: -2.75rem 0 0 -2.75rem;
+  animation: hub-pulse 4s ease-in-out infinite 0.5s;
+}
+
+@keyframes hub-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+.orbit-rings {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.orbit-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  transform: translate(-50%, -50%);
+  transition: border-color 0.6s ease;
+}
+
+.orbit-ring--inner {
+  width: 58%;
+  height: 58%;
+  animation: ring-spin 90s linear infinite;
+}
+
+.orbit-ring--outer {
+  width: 88%;
+  height: 88%;
+  animation: ring-spin 140s linear infinite reverse;
+}
+
+@keyframes ring-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.planets {
+  position: absolute;
+  inset: 0;
+}
+
+.planet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: rotate(var(--angle)) translateX(var(--radius)) rotate(calc(-1 * var(--angle)));
+  animation: planet-float 5s ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+}
+
+.planet__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin: -1.75rem 0 0 -1.75rem;
+  width: 3.5rem;
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+}
+
+.planet__body {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--planet-color, var(--accent));
+  box-shadow: 0 0 12px var(--planet-glow, var(--accent-glow));
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.planet__label {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.planet__link:hover .planet__body,
+.planet__link:focus-visible .planet__body,
+.planet.is-active .planet__body {
+  transform: scale(1.2);
+  box-shadow: 0 0 20px var(--planet-glow, var(--accent-glow)), 0 0 40px var(--planet-glow, var(--accent-glow));
+}
+
+.planet__link:hover .planet__label,
+.planet__link:focus-visible .planet__label,
+.planet.is-active .planet__label {
+  color: var(--text);
+}
+
+.planet--inner {
+  --radius: calc(var(--orbit-size) * 0.29);
+}
+
+.planet--outer {
+  --radius: calc(var(--orbit-size) * 0.44);
+}
+
+@keyframes planet-float {
+  0%, 100% { transform: rotate(var(--angle)) translateX(var(--radius)) rotate(calc(-1 * var(--angle))) translateY(0); }
+  50% { transform: rotate(var(--angle)) translateX(var(--radius)) rotate(calc(-1 * var(--angle))) translateY(-4px); }
+}
+
+.orbit-system:has(.planet__link:hover) .orbit-ring,
+.orbit-system:has(.planet.is-active) .orbit-ring {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+@media (max-width: 640px) {
+  .orbit-system {
+    --orbit-size: min(96vw, 22rem);
+  }
+
+  .planet__body {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .planet__link {
+    margin: -1.375rem 0 0 -1.375rem;
+    width: 2.75rem;
+  }
+
+  .planet__label {
+    font-size: 0.625rem;
+  }
+
+  .projects-index {
+    max-height: min(45vh, 22rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-ring--inner,
+  .orbit-ring--outer,
+  .planet,
+  .hub__ring {
+    animation: none;
+  }
+}

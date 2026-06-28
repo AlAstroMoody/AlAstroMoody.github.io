@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AlAstroMoody — проекты</title>
+  <meta name="description" content="Веб-проекты AlAstroMoody: калькулятор самоцветов Path of Exile, онлайн-радио, погода, бюджет, Goblin Survival, Web API и другие.">
+  <meta name="yandex-verification" content="b7e2b8cf64fe8dfd">
+  <link rel="canonical" href="https://alastromoody.github.io/">
+  <meta name="robots" content="index, follow">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://alastromoody.github.io/">
+  <meta property="og:title" content="AlAstroMoody — проекты">
+  <meta property="og:description" content="Веб-проекты: POE, радио, погода, бюджет, Goblin Survival, Web API.">
+  <meta property="og:locale" content="ru_RU">
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/themes.css">
+  <link rel="stylesheet" href="/css/orbit.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Проекты AlAstroMoody",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "POE Timeless Jewels", "url": "https://alastromoody.github.io/poe/" },
+      { "@type": "ListItem", "position": 2, "name": "Radio", "url": "https://alastromoody.github.io/radio/" },
+      { "@type": "ListItem", "position": 3, "name": "Weather", "url": "https://alastromoody.github.io/weather/" },
+      { "@type": "ListItem", "position": 4, "name": "Budget", "url": "https://alastromoody.github.io/budget/" },
+      { "@type": "ListItem", "position": 5, "name": "Goblin Survival", "url": "https://alastromoody.github.io/gs/" },
+      { "@type": "ListItem", "position": 6, "name": "PWA Magic", "url": "https://alastromoody.github.io/pwa-magic/" },
+      { "@type": "ListItem", "position": 7, "name": "TCOM", "url": "https://alastromoody.github.io/tcom/" }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <canvas id="bg-fx" aria-hidden="true"></canvas>
+
+  <main class="page">
+    <header class="page-header">
+      <p class="page-header__label">alastromoody.github.io</p>
+    </header>
+
+    <section class="scene" aria-labelledby="orbit-title">
+      <h1 id="orbit-title" class="visually-hidden">Проекты AlAstroMoody</h1>
+
+      <div class="orbit-system" id="orbit-system">
+        <div class="hub" aria-hidden="true">
+          <div class="hub__core"></div>
+          <div class="hub__ring hub__ring--1"></div>
+          <div class="hub__ring hub__ring--2"></div>
+        </div>
+
+        <div class="orbit-rings" aria-hidden="true">
+          <div class="orbit-ring orbit-ring--inner"></div>
+          <div class="orbit-ring orbit-ring--outer"></div>
+        </div>
+
+        <nav class="planets" id="planets" aria-label="Навигация по проектам"></nav>
+      </div>
+    </section>
+
+    <section class="projects-index" aria-label="Список проектов">
+      <ul class="projects-list" id="projects-list"></ul>
+    </section>
+  </main>
+
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>

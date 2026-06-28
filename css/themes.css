@@ -1,0 +1,34 @@
+body[data-theme='poe'] {
+  --accent: #c9a227;
+  --accent-glow: rgba(201, 162, 39, 0.4);
+}
+
+body[data-theme='radio'] {
+  --accent: #00d4aa;
+  --accent-glow: rgba(0, 212, 170, 0.35);
+}
+
+body[data-theme='weather'] {
+  --accent: #38bdf8;
+  --accent-glow: rgba(56, 189, 248, 0.35);
+}
+
+body[data-theme='budget'] {
+  --accent: #22c55e;
+  --accent-glow: rgba(34, 197, 94, 0.35);
+}
+
+body[data-theme='gs'] {
+  --accent: #f97316;
+  --accent-glow: rgba(249, 115, 22, 0.35);
+}
+
+body[data-theme='pwa-magic'] {
+  --accent: #e879f9;
+  --accent-glow: rgba(232, 121, 249, 0.35);
+}
+
+body[data-theme='tcom'] {
+  --accent: #ca8a04;
+  --accent-glow: rgba(202, 138, 4, 0.35);
+}
