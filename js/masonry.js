@@ -1,7 +1,7 @@
-function getColumnCount(width) {
-  if (width >= 1280) return 4;
-  if (width >= 960) return 3;
-  if (width >= 640) return 2;
+function getColumnCount(listEl) {
+  if (window.matchMedia('(min-width: 1366px)').matches) return 2;
+  const width = listEl.clientWidth || window.innerWidth;
+  if (width >= 400) return 2;
   return 1;
 }
 
@@ -23,7 +23,7 @@ function createProjectCard(project) {
 
 export function layoutProjectCards(listEl, projects) {
   const cards = projects.map(createProjectCard);
-  const columnCount = getColumnCount(listEl.clientWidth || window.innerWidth);
+  const columnCount = getColumnCount(listEl);
 
   listEl.replaceChildren();
   listEl.dataset.columns = String(columnCount);
@@ -46,7 +46,13 @@ export function layoutProjectCards(listEl, projects) {
 }
 
 export function initProjectCards(listEl, projects, { onHover }) {
-  layoutProjectCards(listEl, projects);
+  const layout = () => layoutProjectCards(listEl, projects);
+
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(layout);
+  } else {
+    layout();
+  }
 
   listEl.addEventListener('mouseover', (event) => {
     const card = event.target.closest('.project-card');
@@ -58,6 +64,6 @@ export function initProjectCards(listEl, projects, { onHover }) {
   let resizeTimer = 0;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = window.setTimeout(() => layoutProjectCards(listEl, projects), 150);
+    resizeTimer = window.setTimeout(layout, 150);
   });
 }

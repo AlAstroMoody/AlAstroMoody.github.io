@@ -1,11 +1,13 @@
 import { startWeatherFX, stopWeatherFX } from './weather.js';
 import { startGsFX, stopGsFX } from './gs.js';
 import { startRadioFX, stopRadioFX } from './radio.js';
+import { startBudgetFX, stopBudgetFX } from './budget.js';
 
 const FX_HANDLERS = {
   weather: { start: startWeatherFX, stop: stopWeatherFX },
   gs: { start: startGsFX, stop: stopGsFX },
   radio: { start: startRadioFX, stop: stopRadioFX },
+  budget: { start: startBudgetFX, stop: stopBudgetFX },
 };
 
 export const FX_PROJECTS = new Set(Object.keys(FX_HANDLERS));

@@ -53,28 +53,30 @@
       <p class="page-header__label">alastromoody.github.io</p>
     </header>
 
-    <section class="scene" aria-labelledby="orbit-title">
-      <h1 id="orbit-title" class="visually-hidden">Проекты AlAstroMoody</h1>
+    <div class="page-body">
+      <section class="projects-index" aria-label="Список проектов">
+        <ul class="projects-list" id="projects-list"></ul>
+      </section>
 
-      <div class="orbit-system" id="orbit-system">
-        <div class="hub" aria-hidden="true">
-          <div class="hub__core"></div>
-          <div class="hub__ring hub__ring--1"></div>
-          <div class="hub__ring hub__ring--2"></div>
+      <section class="scene" aria-labelledby="orbit-title">
+        <h1 id="orbit-title" class="visually-hidden">Проекты AlAstroMoody</h1>
+
+        <div class="orbit-system" id="orbit-system">
+          <div class="hub" aria-hidden="true">
+            <div class="hub__core"></div>
+            <div class="hub__ring hub__ring--1"></div>
+            <div class="hub__ring hub__ring--2"></div>
+          </div>
+
+          <div class="orbit-rings" aria-hidden="true">
+            <div class="orbit-ring orbit-ring--inner"></div>
+            <div class="orbit-ring orbit-ring--outer"></div>
+          </div>
+
+          <nav class="planets" id="planets" aria-label="Навигация по проектам"></nav>
         </div>
-
-        <div class="orbit-rings" aria-hidden="true">
-          <div class="orbit-ring orbit-ring--inner"></div>
-          <div class="orbit-ring orbit-ring--outer"></div>
-        </div>
-
-        <nav class="planets" id="planets" aria-label="Навигация по проектам"></nav>
-      </div>
-    </section>
-
-    <section class="projects-index" aria-label="Список проектов">
-      <ul class="projects-list" id="projects-list"></ul>
-    </section>
+      </section>
+    </div>
   </main>
 
   <script type="module" src="/js/main.js"></script>

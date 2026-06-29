@@ -1,16 +1,17 @@
 .scene {
   display: flex;
-  flex: 1;
+  flex: 0 0 auto;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  order: 1;
   width: 100%;
   min-height: 0;
-  padding: clamp(0.5rem, 2vh, 2rem) 0;
+  padding: clamp(0.25rem, 1.5vh, 1.5rem) 0;
 }
 
 .orbit-system {
-  --orbit-size: min(92vmin, 50rem);
+  --orbit-size: min(96vw, 22rem);
   position: relative;
   width: var(--orbit-size);
   aspect-ratio: 1;
@@ -115,25 +116,69 @@
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  margin: -1.75rem 0 0 -1.75rem;
-  width: 3.5rem;
+  margin: -1.375rem 0 0 -1.375rem;
+  width: 2.75rem;
   text-decoration: none;
   color: inherit;
   outline: none;
 }
 
 .planet__body {
-  width: 3.5rem;
-  height: 3.5rem;
+  position: relative;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 50%;
   background: var(--planet-color, var(--accent));
   box-shadow: 0 0 12px var(--planet-glow, var(--accent-glow));
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.planet__body::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--planet-color, var(--accent)) 75%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.planet.is-pulse .planet__body {
+  animation: planet-flash 0.45s ease-out;
+}
+
+.planet.is-pulse .planet__body::after {
+  animation: planet-wave 0.95s cubic-bezier(0.22, 0.55, 0.25, 1) forwards;
+}
+
+@keyframes planet-flash {
+  0% {
+    box-shadow:
+      0 0 0 0 var(--planet-glow, var(--accent-glow)),
+      0 0 28px var(--planet-glow, var(--accent-glow)),
+      0 0 56px var(--planet-glow, var(--accent-glow));
+  }
+
+  100% {
+    box-shadow: 0 0 20px var(--planet-glow, var(--accent-glow)), 0 0 40px var(--planet-glow, var(--accent-glow));
+  }
+}
+
+@keyframes planet-wave {
+  0% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+
+  100% {
+    transform: scale(5);
+    opacity: 0;
+  }
+}
+
 .planet__label {
   font-family: var(--font-display);
-  font-size: 0.75rem;
+  font-size: 0.625rem;
   font-weight: 500;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -173,27 +218,32 @@
   border-color: color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .orbit-system {
-    --orbit-size: min(96vw, 22rem);
-  }
-
-  .planet__body {
-    width: 2.75rem;
-    height: 2.75rem;
+    --orbit-size: min(92vmin, 50rem);
   }
 
   .planet__link {
-    margin: -1.375rem 0 0 -1.375rem;
-    width: 2.75rem;
+    margin: -1.75rem 0 0 -1.75rem;
+    width: 3.5rem;
+  }
+
+  .planet__body {
+    width: 3.5rem;
+    height: 3.5rem;
   }
 
   .planet__label {
-    font-size: 0.625rem;
+    font-size: 0.75rem;
   }
+}
 
-  .projects-index {
-    max-height: min(45vh, 22rem);
+@media (min-width: 1366px) {
+  .scene {
+    order: unset;
+    flex: 1;
+    grid-column: 2;
+    grid-row: 1;
   }
 }
 
@@ -202,6 +252,11 @@
   .orbit-ring--outer,
   .planet,
   .hub__ring {
+    animation: none;
+  }
+
+  .planet.is-pulse .planet__body,
+  .planet.is-pulse .planet__body::after {
     animation: none;
   }
 }

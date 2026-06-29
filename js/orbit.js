@@ -10,6 +10,16 @@ const THEME_COLORS = {
   tcom: { color: '#ca8a04', glow: 'rgba(202, 138, 4, 0.5)' },
 };
 
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function pulsePlanet(planet) {
+  if (!planet || reducedMotion) return;
+
+  planet.classList.remove('is-pulse');
+  void planet.offsetWidth;
+  planet.classList.add('is-pulse');
+}
+
 export function initOrbit(planetsEl, projects, { onSelect }) {
   const fragment = document.createDocumentFragment();
 
@@ -42,9 +52,17 @@ export function initOrbit(planetsEl, projects, { onSelect }) {
 
   planetsEl.appendChild(fragment);
 
+  planetsEl.addEventListener('animationend', (event) => {
+    if (event.animationName !== 'planet-wave') return;
+    event.target.closest('.planet')?.classList.remove('is-pulse');
+  });
+
   function select(id) {
     planetsEl.querySelectorAll('.planet').forEach((el) => {
-      el.classList.toggle('is-active', el.dataset.id === id);
+      const active = el.dataset.id === id;
+      el.classList.toggle('is-active', active);
+      if (active) pulsePlanet(el);
+      else el.classList.remove('is-pulse');
     });
   }
 

@@ -1,8 +1,7 @@
-const r180 = Math.PI;
-const r90 = Math.PI / 2;
 const r15 = Math.PI / 12;
 const { random } = Math;
 const FRAME_INTERVAL = 1000 / 30;
+const PROJECT_ID = 'gs';
 
 let rafId = 0;
 let running = false;
@@ -10,6 +9,8 @@ let canvas = null;
 let ctx = null;
 let canvasWidth = 0;
 let canvasHeight = 0;
+let originX = 0;
+let originY = 0;
 let resizeHandler = null;
 let steps = [];
 let prevSteps = [];
@@ -18,6 +19,35 @@ let lastTime = 0;
 
 const INIT_DEPTH = 4;
 const BRANCH_LENGTH = 6;
+
+function branchColor() {
+  const mix = random();
+  const r = Math.round(148 + mix * 38);
+  const g = Math.round(58 + mix * 30);
+  const b = Math.round(12 + mix * 12);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+function updateOrigin() {
+  const body = document.querySelector(`.planet[data-id="${PROJECT_ID}"] .planet__body`);
+  if (body) {
+    const rect = body.getBoundingClientRect();
+    originX = rect.left + rect.width / 2;
+    originY = rect.top + rect.height / 2;
+    return;
+  }
+
+  const hub = document.querySelector('.hub__core');
+  if (hub) {
+    const rect = hub.getBoundingClientRect();
+    originX = rect.left + rect.width / 2;
+    originY = rect.top + rect.height / 2;
+    return;
+  }
+
+  originX = canvasWidth / 2;
+  originY = canvasHeight / 2;
+}
 
 function initCanvas(target, width, height) {
   const context = target.getContext('2d');
@@ -51,7 +81,7 @@ function branchStep(x, y, rad) {
   ctx.beginPath();
   ctx.moveTo(x, y);
   ctx.lineTo(nx, ny);
-  ctx.strokeStyle = '#4a4a8a';
+  ctx.strokeStyle = branchColor();
   ctx.lineWidth = random() * 1.2 + 0.8;
   ctx.globalAlpha = random() * 0.6 + 0.3;
   ctx.stroke();
@@ -67,13 +97,17 @@ function branchStep(x, y, rad) {
 }
 
 function createSeedSteps() {
-  const seeds = [
-    () => branchStep(random() * canvasWidth, 0, r90),
-    () => branchStep(random() * canvasWidth, canvasHeight, -r90),
-    () => branchStep(0, random() * canvasHeight, 0),
-    () => branchStep(canvasWidth, random() * canvasHeight, r180),
-  ];
-  return canvasWidth < 500 ? seeds.slice(0, 2) : seeds;
+  updateOrigin();
+
+  const count = canvasWidth < 500 ? 4 : 8;
+  const seeds = [];
+
+  for (let i = 0; i < count; i++) {
+    const rad = ((Math.PI * 2) / count) * i + (random() - 0.5) * 0.35;
+    seeds.push(() => branchStep(originX, originY, rad));
+  }
+
+  return seeds;
 }
 
 function frame() {
@@ -111,6 +145,7 @@ function handleResize() {
   ctx = initCanvas(canvas, window.innerWidth, window.innerHeight);
   canvasWidth = window.innerWidth;
   canvasHeight = window.innerHeight;
+  updateOrigin();
   restartGrowth();
 }
 
@@ -123,6 +158,7 @@ export function startGsFX(targetCanvas) {
   ctx = initCanvas(canvas, window.innerWidth, window.innerHeight);
   canvasWidth = window.innerWidth;
   canvasHeight = window.innerHeight;
+  updateOrigin();
 
   resizeHandler = handleResize;
   window.addEventListener('resize', resizeHandler);
