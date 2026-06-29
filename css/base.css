@@ -31,14 +31,20 @@ body {
   overflow-x: hidden;
 }
 
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 #bg,
 #bg-fx {
-  position: fixed;
+  position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
-  pointer-events: none;
 }
 
 #bg {
@@ -50,16 +56,16 @@ body {
   transition: opacity 1.2s ease-out;
 }
 
-body.fx-weather #bg {
+body.fx-active #bg {
   opacity: 0;
 }
 
-body.fx-weather-ready #bg-fx {
+body.fx-ready #bg-fx {
   opacity: 1;
 }
 
 .grain {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
@@ -69,7 +75,8 @@ body.fx-weather-ready #bg-fx {
 
 .page {
   position: relative;
-  z-index: 2;
+  z-index: 1;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
@@ -106,6 +113,8 @@ body.fx-weather-ready #bg-fx {
 }
 
 .projects-index {
+  position: relative;
+  z-index: 1;
   flex-shrink: 0;
   width: 100%;
   max-width: 120rem;
@@ -203,6 +212,11 @@ body.fx-weather-ready #bg-fx {
 
 .project-card.is-active {
   border-color: var(--accent);
+}
+
+body.fx-active .project-card {
+  background: rgba(10, 10, 18, 0.88);
+  backdrop-filter: blur(10px);
 }
 
 @media (prefers-reduced-motion: reduce) {

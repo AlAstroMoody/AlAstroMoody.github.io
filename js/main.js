@@ -1,7 +1,7 @@
 import { projects } from './projects.js';
 import { initOrbit, renderProjectList, setTheme, applyHashTheme } from './orbit.js';
 import { initBackground } from './background.js';
-import { setProjectFx } from './fx/index.js';
+import { setProjectFx, FX_PROJECTS } from './fx/index.js';
 
 const planetsEl = document.getElementById('planets');
 const listEl = document.getElementById('projects-list');
@@ -18,13 +18,13 @@ function showProject(id) {
 
   setTheme(project.theme);
 
-  if (project.id === 'weather') {
+  if (FX_PROJECTS.has(project.id)) {
     bg.pause();
-    document.body.classList.add('fx-weather');
+    document.body.classList.add('fx-active');
   } else {
     bg.setTheme(project.theme);
     bg.resume();
-    document.body.classList.remove('fx-weather', 'fx-weather-ready');
+    document.body.classList.remove('fx-active', 'fx-ready');
   }
 
   setProjectFx(project.id);

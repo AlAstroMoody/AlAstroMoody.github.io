@@ -45,6 +45,9 @@ function handleResize() {
 export function stopWeatherFX() {
   if (weatherFx) {
     weatherFx.stop();
+    if (typeof weatherFx.destroy === 'function') {
+      weatherFx.destroy();
+    }
     weatherFx = null;
   }
   window.removeEventListener('resize', handleResize);
@@ -57,8 +60,9 @@ export async function startWeatherFX(targetCanvas) {
   if (!targetCanvas) return;
 
   canvas = targetCanvas;
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width || window.innerWidth;
+  canvas.height = rect.height || window.innerHeight;
 
   const WeatherFXClass = await loadWeatherFX();
 
@@ -69,4 +73,8 @@ export async function startWeatherFX(targetCanvas) {
 
   window.addEventListener('resize', handleResize);
   await weatherFx.start();
+
+  if (weatherFx.resize) {
+    weatherFx.resize(canvas.width, canvas.height);
+  }
 }
