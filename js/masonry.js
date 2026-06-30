@@ -1,8 +1,7 @@
 function getColumnCount(listEl) {
-  if (window.matchMedia('(min-width: 1366px)').matches) return 2;
   const width = listEl.clientWidth || window.innerWidth;
-  if (width >= 400) return 2;
-  return 1;
+  if (width < 300) return 1;
+  return 2;
 }
 
 function createProjectCard(project) {
