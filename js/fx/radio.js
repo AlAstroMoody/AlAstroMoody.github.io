@@ -2,6 +2,7 @@ const BAR_COUNT = 180;
 const BUFFER_LENGTH = 64;
 const FRAME_INTERVAL = 1000 / 30;
 const INTENSITY = 0.55;
+const PROJECT_ID = 'radio';
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -13,6 +14,7 @@ let width = 0;
 let height = 0;
 let centerX = 0;
 let centerY = 0;
+let innerRadius = 48;
 let resizeHandler = null;
 let lastTime = 0;
 let phase = 0;
@@ -20,11 +22,21 @@ let phase = 0;
 const dataArray = new Uint8Array(BUFFER_LENGTH);
 
 function updateCenter() {
+  const body = document.querySelector(`.planet[data-id="${PROJECT_ID}"] .planet__body`);
+  if (body) {
+    const rect = body.getBoundingClientRect();
+    centerX = rect.left + rect.width / 2;
+    centerY = rect.top + rect.height / 2;
+    innerRadius = Math.max(rect.width, rect.height) * 0.52;
+    return;
+  }
+
   const hub = document.querySelector('.hub__core');
   if (hub) {
     const rect = hub.getBoundingClientRect();
     centerX = rect.left + rect.width / 2;
     centerY = rect.top + rect.height / 2;
+    innerRadius = Math.min(width, height) * 0.12;
     return;
   }
 
@@ -33,11 +45,13 @@ function updateCenter() {
     const rect = orbit.getBoundingClientRect();
     centerX = rect.left + rect.width / 2;
     centerY = rect.top + rect.height / 2;
+    innerRadius = Math.min(width, height) * 0.12;
     return;
   }
 
   centerX = width / 2;
   centerY = height / 2;
+  innerRadius = Math.min(width, height) * 0.12;
 }
 
 function resize() {
@@ -75,12 +89,12 @@ function fillSyntheticData(time) {
 }
 
 function drawRadial(context, data, cx, cy) {
-  const innerRadius = Math.min(width, height) * 0.12;
   const rads = (Math.PI * 2) / BAR_COUNT;
+  const maxBar = Math.min(width, height) * 0.18 * INTENSITY;
 
   for (let i = 0; i < BAR_COUNT; i++) {
     const value = data[i % BUFFER_LENGTH];
-    const barHeight = (value / 255) * Math.min(width, height) * 0.18 * INTENSITY;
+    const barHeight = (value / 255) * maxBar;
 
     const angle = rads * i;
     const x = cx + Math.cos(angle) * innerRadius;
