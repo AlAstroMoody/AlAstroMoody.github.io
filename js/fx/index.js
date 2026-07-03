@@ -3,6 +3,7 @@ import { startGsFX, stopGsFX } from './gs.js';
 import { startRadioFX, stopRadioFX } from './radio.js';
 import { startBudgetFX, stopBudgetFX } from './budget.js';
 import { startPwaMagicFX, stopPwaMagicFX } from './pwa-magic.js';
+import { startTcomFX, stopTcomFX } from './tcom.js';
 
 const FX_HANDLERS = {
   weather: { start: startWeatherFX, stop: stopWeatherFX },
@@ -10,6 +11,7 @@ const FX_HANDLERS = {
   radio: { start: startRadioFX, stop: stopRadioFX },
   budget: { start: startBudgetFX, stop: stopBudgetFX },
   'pwa-magic': { start: startPwaMagicFX, stop: stopPwaMagicFX },
+  tcom: { start: startTcomFX, stop: stopTcomFX },
 };
 
 export const FX_PROJECTS = new Set(Object.keys(FX_HANDLERS));
