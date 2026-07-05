@@ -2,9 +2,11 @@ import { projects } from './projects.js';
 import { initOrbit, renderProjectList, setTheme, applyHashTheme } from './orbit.js';
 import { initBackground } from './background.js';
 import { setProjectFx, FX_PROJECTS } from './fx/index.js';
+import { playIntro } from './intro.js';
 
 const planetsEl = document.getElementById('planets');
 const listEl = document.getElementById('projects-list');
+const orbitSystemEl = document.getElementById('orbit-system');
 const bgCanvas = document.getElementById('bg');
 
 const bg = initBackground(bgCanvas);
@@ -48,9 +50,18 @@ function syncCards(activeId) {
 }
 
 const fromHash = applyHashTheme(projects);
-if (fromHash) {
-  showProject(fromHash.id);
+
+async function start() {
+  if (document.fonts?.ready) {
+    await document.fonts.ready;
+  }
+  await playIntro(orbitSystemEl);
+  if (fromHash) {
+    showProject(fromHash.id);
+  }
 }
+
+start();
 
 window.addEventListener('hashchange', () => {
   const project = applyHashTheme(projects);

@@ -1,3 +1,9 @@
+@property --radius-scale {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+
 .scene {
   display: flex;
   flex: 0 0 auto;
@@ -106,7 +112,8 @@
   left: 50%;
   width: 0;
   height: 0;
-  transform: rotate(var(--angle)) translateX(var(--radius)) rotate(calc(-1 * var(--angle)));
+  --radius-scale: 1;
+  transform: rotate(var(--angle)) translateX(calc(var(--radius) * var(--radius-scale))) rotate(calc(-1 * var(--angle)));
   animation: planet-float 5s ease-in-out infinite;
   animation-delay: var(--float-delay, 0s);
 }
@@ -209,8 +216,8 @@
 }
 
 @keyframes planet-float {
-  0%, 100% { transform: rotate(var(--angle)) translateX(var(--radius)) rotate(calc(-1 * var(--angle))) translateY(0); }
-  50% { transform: rotate(var(--angle)) translateX(var(--radius)) rotate(calc(-1 * var(--angle))) translateY(-4px); }
+  0%, 100% { transform: rotate(var(--angle)) translateX(calc(var(--radius) * var(--radius-scale))) rotate(calc(-1 * var(--angle))) translateY(0); }
+  50% { transform: rotate(var(--angle)) translateX(calc(var(--radius) * var(--radius-scale))) rotate(calc(-1 * var(--angle))) translateY(-4px); }
 }
 
 .orbit-system:has(.planet__link:hover) .orbit-ring,
@@ -247,6 +254,230 @@
   }
 }
 
+/* --- Intro sequence --- */
+
+.intro-burst {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+body.is-intro .orbit-system,
+body.is-intro-settling .orbit-system {
+  pointer-events: none;
+}
+
+body.is-intro .page-header {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+}
+
+body.is-intro .project-card,
+body.is-intro-settling .project-card:not(.is-intro-visible) {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+
+body.is-intro-settling .project-card.is-intro-visible {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+body.is-intro-done .page-header {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+body.is-intro-done .project-card {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+body.is-intro .orbit-ring {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0);
+  animation: none;
+}
+
+body.is-intro .hub__ring {
+  opacity: 0;
+  transform: scale(0);
+  animation: none;
+}
+
+body.is-intro .planet {
+  --radius-scale: 0;
+  opacity: 0;
+  animation: none;
+}
+
+body.is-intro .planet__label {
+  opacity: 0;
+}
+
+body.is-intro .hub__core {
+  transform: scale(0);
+  animation: intro-star-grow 0.72s cubic-bezier(0.22, 0.55, 0.25, 1) forwards;
+}
+
+body.is-intro-burst .hub__core {
+  animation: intro-star-flash 0.35s ease-out forwards;
+}
+
+@keyframes intro-star-grow {
+  0% {
+    transform: scale(0);
+    box-shadow: 0 0 0 rgba(99, 102, 241, 0);
+  }
+
+  55% {
+    transform: scale(1);
+    box-shadow: 0 0 24px var(--accent-glow), 0 0 48px var(--accent-glow);
+  }
+
+  78% {
+    transform: scale(1.14);
+    box-shadow: 0 0 36px var(--accent-glow), 0 0 72px var(--accent-glow), 0 0 96px rgba(99, 102, 241, 0.18);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 28px var(--accent-glow), 0 0 56px var(--accent-glow);
+  }
+}
+
+@keyframes intro-star-flash {
+  0% {
+    transform: scale(1.1);
+    box-shadow: 0 0 40px var(--accent-glow), 0 0 80px var(--accent-glow);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 24px var(--accent-glow), 0 0 48px var(--accent-glow);
+  }
+}
+
+body.is-intro-settling .orbit-ring--inner {
+  animation: intro-ring-expand 0.85s cubic-bezier(0.22, 0.55, 0.25, 1) forwards;
+}
+
+body.is-intro-settling .orbit-ring--outer {
+  animation: intro-ring-expand 0.95s 0.12s cubic-bezier(0.22, 0.55, 0.25, 1) forwards;
+}
+
+body.is-intro-settling .hub__ring--1 {
+  animation: intro-hub-ring 0.7s 0.25s cubic-bezier(0.22, 0.55, 0.25, 1) forwards;
+}
+
+body.is-intro-settling .hub__ring--2 {
+  animation: intro-hub-ring 0.75s 0.35s cubic-bezier(0.22, 0.55, 0.25, 1) forwards;
+}
+
+@keyframes intro-ring-expand {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes intro-hub-ring {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  to {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+}
+
+body.is-intro-settling .planet {
+  opacity: 0;
+  --radius-scale: 0;
+  animation: none;
+}
+
+body.is-intro-settling .planet.is-intro-landed {
+  opacity: 1;
+  --radius-scale: 1;
+}
+
+body.is-intro-settling .planet.is-intro-landed .planet__body {
+  animation: intro-planet-pop 0.5s cubic-bezier(0.22, 0.55, 0.25, 1) forwards;
+}
+
+@keyframes intro-planet-pop {
+  0% {
+    transform: scale(0.2);
+    box-shadow: 0 0 24px var(--planet-glow, var(--accent-glow));
+  }
+
+  65% {
+    transform: scale(1.18);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+body.is-intro-settling .planet.is-intro-landed .planet__label {
+  animation: intro-label-in 0.45s ease 0.15s forwards;
+}
+
+body.is-intro-settling .planet__label {
+  opacity: 0;
+  animation: none;
+}
+
+@keyframes intro-label-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+body.is-intro-done .orbit-ring--inner {
+  animation: ring-spin 90s linear infinite;
+}
+
+body.is-intro-done .orbit-ring--outer {
+  animation: ring-spin 140s linear infinite reverse;
+}
+
+body.is-intro-done .hub__ring--1 {
+  animation: hub-pulse 4s ease-in-out infinite;
+}
+
+body.is-intro-done .hub__ring--2 {
+  animation: hub-pulse 4s ease-in-out infinite 0.5s;
+}
+
+body.is-intro-done .planet {
+  animation: planet-float 5s ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .orbit-ring--inner,
   .orbit-ring--outer,
@@ -258,5 +489,18 @@
   .planet.is-pulse .planet__body,
   .planet.is-pulse .planet__body::after {
     animation: none;
+  }
+
+  body.is-intro .page-header {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  body.is-intro .project-card,
+  body.is-intro-settling .project-card {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
   }
 }

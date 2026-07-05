@@ -1,7 +1,7 @@
 const FRAME_INTERVAL = 1000 / 30;
 const PROJECT_ID = 'tcom';
 const PULSE_INTERVAL = 520;
-const GLOW_DECAY = 0.9;
+const GLOW_DECAY = 0.0425;
 const SLOT_SPACING = 4;
 const BURST_PARTICLE_COUNT = 24;
 const BURST_SPEED_MIN = 0.012;
@@ -83,7 +83,7 @@ function updateOrigin() {
   }
 
   originX = width / 2;
-  originY = height / 2; 
+  originY = height / 2;
 }
 
 // Центр панели в верхнем правом углу.
@@ -580,12 +580,12 @@ function frame(now) {
   }
 
   if (phase === 'live') {
-    const changed = updateGlow();
+    updateGlow();
     if (now >= nextPulseAt) {
       startPulse();
       nextPulseAt = now + PULSE_INTERVAL;
     }
-    if (changed) render();
+    render();
     lastTime = now;
     return;
   }
