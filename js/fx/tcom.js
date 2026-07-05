@@ -83,7 +83,7 @@ function updateOrigin() {
   }
 
   originX = width / 2;
-  originY = height / 2;
+  originY = height / 2; 
 }
 
 // Центр панели в верхнем правом углу.
