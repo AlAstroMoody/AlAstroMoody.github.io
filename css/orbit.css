@@ -45,6 +45,7 @@
   border: 0;
   cursor: pointer;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
   z-index: 3;
 }
 
@@ -270,6 +271,7 @@
   text-decoration: none;
   color: inherit;
   outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /*
@@ -311,12 +313,18 @@
 
 .planet__link:hover .planet__ring::before,
 .planet__link:hover .planet__ring::after,
-.planet__link:focus-visible .planet__ring::before,
-.planet__link:focus-visible .planet__ring::after,
 .planet.is-active .planet__ring::before,
 .planet.is-active .planet__ring::after {
   transform: rotate(-24deg) scaleY(0.34) scale(1.2);
   opacity: 1;
+}
+
+@media (hover: hover) {
+  .planet__link:focus-visible .planet__ring::before,
+  .planet__link:focus-visible .planet__ring::after {
+    transform: rotate(-24deg) scaleY(0.34) scale(1.2);
+    opacity: 1;
+  }
 }
 
 .planet__body {
@@ -506,16 +514,27 @@
 }
 
 .planet__link:hover .planet__body,
-.planet__link:focus-visible .planet__body,
 .planet.is-active .planet__body {
   transform: scale(1.2);
   box-shadow: 0 0 20px var(--planet-glow, var(--accent-glow)), 0 0 40px var(--planet-glow, var(--accent-glow));
 }
 
+@media (hover: hover) {
+  .planet__link:focus-visible .planet__body {
+    transform: scale(1.2);
+    box-shadow: 0 0 20px var(--planet-glow, var(--accent-glow)), 0 0 40px var(--planet-glow, var(--accent-glow));
+  }
+}
+
 .planet__link:hover .planet__label,
-.planet__link:focus-visible .planet__label,
 .planet.is-active .planet__label {
   color: var(--text);
+}
+
+@media (hover: hover) {
+  .planet__link:focus-visible .planet__label {
+    color: var(--text);
+  }
 }
 
 .planet--inner {

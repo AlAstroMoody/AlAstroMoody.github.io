@@ -65,6 +65,7 @@ export function initOrbit(planetsEl, projects, { onHover, onNavigate }) {
 
       if (touchOnly) {
         onHover?.(project.id, link.querySelector('.planet__body'), { animate: false });
+        link.blur();
         return;
       }
 

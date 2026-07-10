@@ -18,6 +18,8 @@
 
 html {
   color-scheme: dark;
+  background: var(--bg);
+  overscroll-behavior: none;
 }
 
 body {
@@ -29,6 +31,7 @@ body {
   color: var(--text);
   background: var(--bg);
   overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 .backdrop {
@@ -37,6 +40,9 @@ body {
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  /* lvh покрывает максимальную высоту viewport при скрытии адресной строки */
+  min-height: 100lvh;
+  background: var(--bg);
 }
 
 #bg,

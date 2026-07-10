@@ -56,7 +56,7 @@ export const projects = [
     tags: ['WC3', 'Craft'],
     theme: 'gs',
     orbit: 'outer',
-    angle: 254,
+    angle: 261,
   },
   {
     id: 'pwa-magic',
