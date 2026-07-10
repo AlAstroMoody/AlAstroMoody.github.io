@@ -1,4 +1,5 @@
 import { playFlash } from './intro.js';
+import { playSolarFlare } from './solar-flare.js';
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -11,11 +12,12 @@ export function initAbout(orbitSystemEl) {
     return document.body.classList.contains('is-about');
   }
 
-  function open() {
+  async function open() {
     if (isOpen()) return;
 
     if (!reducedMotion) {
-      playFlash(orbitSystemEl);
+      await playSolarFlare(orbitSystemEl);
+      await playFlash(orbitSystemEl);
     }
 
     document.body.classList.add('is-about');

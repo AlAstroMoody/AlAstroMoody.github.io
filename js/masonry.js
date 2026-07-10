@@ -44,7 +44,7 @@ export function layoutProjectCards(listEl, projects) {
   }
 }
 
-export function initProjectCards(listEl, projects, { onHover }) {
+export function initProjectCards(listEl, projects, { onHover, onNavigate }) {
   const layout = () => layoutProjectCards(listEl, projects);
 
   if (document.fonts?.ready) {
@@ -57,8 +57,28 @@ export function initProjectCards(listEl, projects, { onHover }) {
     const card = event.target.closest('.project-card');
     if (!card || !listEl.contains(card)) return;
     if (event.relatedTarget instanceof Node && card.contains(event.relatedTarget)) return;
-    onHover?.(card.dataset.id);
+    onHover?.(card.dataset.id, card);
   });
+
+  listEl.addEventListener('click', (event) => {
+    const card = event.target.closest('.project-card');
+    if (!card || !listEl.contains(card)) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+
+    event.preventDefault();
+    onNavigate?.(card.dataset.id, card);
+  });
+
+  if (matchMedia('(pointer: fine)').matches) {
+    listEl.addEventListener('pointermove', (event) => {
+      const card = event.target.closest('.project-card');
+      if (!card) return;
+
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+      card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+    }, { passive: true });
+  }
 
   let resizeTimer = 0;
   window.addEventListener('resize', () => {

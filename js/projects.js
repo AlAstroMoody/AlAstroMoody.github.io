@@ -45,6 +45,7 @@ export const projects = [
     theme: 'budget',
     orbit: 'outer',
     angle: 30,
+    moon: true,
   },
   {
     id: 'gs',

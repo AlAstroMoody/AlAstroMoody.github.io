@@ -1,6 +1,6 @@
 import { initProjectCards } from './masonry.js';
 
-const THEME_COLORS = {
+export const THEME_COLORS = {
   poe: { color: '#c9a227', glow: 'rgba(201, 162, 39, 0.5)' },
   radio: { color: '#00d4aa', glow: 'rgba(0, 212, 170, 0.5)' },
   weather: { color: '#38bdf8', glow: 'rgba(56, 189, 248, 0.5)' },
@@ -23,7 +23,7 @@ function pulsePlanet(planet) {
   planet.classList.add('is-pulse');
 }
 
-export function initOrbit(planetsEl, projects, { onSelect }) {
+export function initOrbit(planetsEl, projects, { onHover, onNavigate }) {
   const fragment = document.createDocumentFragment();
 
   projects.forEach((project, index) => {
@@ -40,11 +40,14 @@ export function initOrbit(planetsEl, projects, { onSelect }) {
     planet.style.setProperty('--spin-duration', `${18 + (index % 4) * 7}s`);
 
     const ring = project.rings ? '<span class="planet__ring" aria-hidden="true"></span>' : '';
+    const moon = project.moon
+      ? '<span class="planet__moon-orbit" aria-hidden="true"><span class="planet__moon"></span></span>'
+      : '';
 
     planet.innerHTML = `
       <a class="planet__link" href="${project.url}" data-id="${project.id}">
         ${ring}
-        <span class="planet__body" aria-hidden="true"></span>
+        <span class="planet__body" aria-hidden="true">${moon}</span>
         <span class="planet__label">${project.shortTitle}</span>
         <span class="visually-hidden">${project.title}: ${project.description}</span>
       </a>
@@ -52,15 +55,21 @@ export function initOrbit(planetsEl, projects, { onSelect }) {
 
     const link = planet.querySelector('.planet__link');
 
-    link.addEventListener('mouseenter', () => onSelect?.(project.id));
-    link.addEventListener('focus', () => onSelect?.(project.id));
+    link.addEventListener('mouseenter', () => onHover?.(project.id, link.querySelector('.planet__body')));
+    link.addEventListener('focus', () => onHover?.(project.id, link.querySelector('.planet__body')));
 
-    if (touchOnly) {
-      link.addEventListener('click', (event) => {
-        event.preventDefault();
-        onSelect?.(project.id);
-      });
-    }
+    link.addEventListener('click', (event) => {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+
+      event.preventDefault();
+
+      if (touchOnly) {
+        onHover?.(project.id, link.querySelector('.planet__body'), { animate: false });
+        return;
+      }
+
+      onNavigate?.(project.id, link.querySelector('.planet__body'));
+    });
 
     fragment.appendChild(planet);
   });

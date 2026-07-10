@@ -1,10 +1,12 @@
 import { projects } from './projects.js';
-import { initOrbit, renderProjectList, setTheme, applyHashTheme } from './orbit.js';
+import { initOrbit, renderProjectList, setTheme, applyHashTheme, THEME_COLORS } from './orbit.js';
 import { initBackground } from './background.js';
 import { setProjectFx, FX_PROJECTS } from './fx/index.js';
 import { playIntro } from './intro.js';
 import { initAbout } from './about.js';
 import { initComet } from './comet.js';
+import { withThemeTransition } from './theme-transition.js';
+import { playWarp } from './warp.js';
 
 const planetsEl = document.getElementById('planets');
 const listEl = document.getElementById('projects-list');
@@ -13,16 +15,15 @@ const bgCanvas = document.getElementById('bg');
 
 const bg = initBackground(bgCanvas);
 let activeProjectId = null;
+let fxTimer = 0;
+
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const touchOnly = matchMedia('(hover: none)').matches;
 
 // FX, которые рисуют собственный непрозрачный фон — под ними звёзды не нужны
 const FX_OPAQUE = new Set(['weather']);
 
-function showProject(id) {
-  const project = projects.find((p) => p.id === id);
-  if (!project || id === activeProjectId) return;
-
-  activeProjectId = id;
-
+function applyProjectState(project) {
   setTheme(project.theme);
 
   if (FX_PROJECTS.has(project.id)) {
@@ -42,18 +43,54 @@ function showProject(id) {
     document.body.classList.remove('fx-active', 'fx-ready', 'fx-opaque');
   }
 
-  setProjectFx(project.id);
-  syncCards(project.id);
-  orbit.select(project.id);
   history.replaceState(null, '', `#${project.id}`);
 }
 
+function scheduleFx(projectId, delay = 120) {
+  clearTimeout(fxTimer);
+  fxTimer = window.setTimeout(() => setProjectFx(projectId), delay);
+}
+
+function showProject(id, originEl, { animate = true } = {}) {
+  const project = projects.find((p) => p.id === id);
+  if (!project) return;
+  if (id === activeProjectId && animate) return;
+
+  activeProjectId = id;
+
+  syncCards(project.id);
+  orbit.select(project.id);
+
+  withThemeTransition(() => applyProjectState(project));
+  scheduleFx(project.id, animate ? 120 : 0);
+}
+
+function navigateToProject(id, originEl) {
+  const project = projects.find((p) => p.id === id);
+  if (!project) return;
+
+  showProject(id, originEl, { animate: false });
+
+  const colors = THEME_COLORS[project.theme] ?? THEME_COLORS.poe;
+
+  if (!touchOnly && !reducedMotion) {
+    playWarp(colors.color).then(() => {
+      window.location.assign(project.url);
+    });
+    return;
+  }
+
+  window.location.assign(project.url);
+}
+
 const orbit = initOrbit(planetsEl, projects, {
-  onSelect: showProject,
+  onHover: showProject,
+  onNavigate: navigateToProject,
 });
 
 renderProjectList(listEl, projects, {
   onHover: showProject,
+  onNavigate: navigateToProject,
 });
 
 initAbout(orbitSystemEl);
@@ -73,7 +110,7 @@ async function start() {
   }
   await playIntro(orbitSystemEl);
   if (fromHash) {
-    showProject(fromHash.id);
+    showProject(fromHash.id, null, { animate: false });
   }
 }
 
@@ -81,5 +118,5 @@ start();
 
 window.addEventListener('hashchange', () => {
   const project = applyHashTheme(projects);
-  if (project) showProject(project.id);
+  if (project) showProject(project.id, null, { animate: false });
 });

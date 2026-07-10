@@ -324,6 +324,11 @@
   width: 2.75rem;
   height: 2.75rem;
   border-radius: 50%;
+  /* Освещённая сторона всегда смотрит на солнце: позиция блика считается
+     из угла планеты (--angle наследуется с .planet). Планета стоит в точке
+     (cos, sin) от центра, значит свет приходит с направления (-cos, -sin). */
+  --sun-x: calc(50% - 42% * cos(var(--angle, 45deg)));
+  --sun-y: calc(50% - 42% * sin(var(--angle, 45deg)));
   background-color: var(--planet-color, var(--accent));
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.09' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23p)'/%3E%3C/svg%3E"),
@@ -334,7 +339,7 @@
       rgba(255, 255, 255, 0.05) 6px 9px
     ),
     radial-gradient(
-      circle at 32% 28%,
+      circle at var(--sun-x) var(--sun-y),
       color-mix(in srgb, var(--planet-color, var(--accent)) 70%, white),
       var(--planet-color, var(--accent)) 48%,
       color-mix(in srgb, var(--planet-color, var(--accent)) 55%, black) 100%
@@ -362,8 +367,16 @@
   inset: 0;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 36%),
-    radial-gradient(circle at 68% 74%, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0) 46%),
+    radial-gradient(
+      circle at calc(50% - 26% * cos(var(--angle, 45deg))) calc(50% - 26% * sin(var(--angle, 45deg))),
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0) 36%
+    ),
+    radial-gradient(
+      circle at calc(50% + 26% * cos(var(--angle, 45deg))) calc(50% + 26% * sin(var(--angle, 45deg))),
+      rgba(0, 0, 0, 0.3),
+      rgba(0, 0, 0, 0) 46%
+    ),
     radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.45) 96%);
   pointer-events: none;
 }
@@ -378,6 +391,41 @@
   pointer-events: none;
 }
 
+/* Спутник: крошечная луна на орбите вокруг планеты */
+.planet__moon-orbit {
+  position: absolute;
+  inset: -0.35rem;
+  animation: moon-orbit 9s linear infinite;
+  pointer-events: none;
+}
+
+.planet__moon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin: -0.2rem 0 0 1.15rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(255, 255, 255, 0.85),
+    color-mix(in srgb, var(--planet-color, var(--accent)) 40%, #888) 55%,
+    #444 100%
+  );
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.25);
+}
+
+@keyframes moon-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /*
  * Лава для gs: тёмная корка (multiply-шум) + контрастный шум через color-dodge,
  * который «прожигает» яркие трещины на раскалённой подложке.
@@ -388,7 +436,7 @@
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cfilter id='l'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.16' numOctaves='4' seed='3' stitchTiles='stitch'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='gamma' exponent='2.8'/%3E%3CfeFuncG type='gamma' exponent='2.8'/%3E%3CfeFuncB type='gamma' exponent='2.8'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23l)'/%3E%3C/svg%3E"),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.045' numOctaves='3' seed='9' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23c)'/%3E%3C/svg%3E"),
     radial-gradient(
-      circle at 32% 28%,
+      circle at var(--sun-x) var(--sun-y),
       #fed7aa,
       #f97316 42%,
       #450a0a 100%
@@ -503,6 +551,16 @@
     height: 3.5rem;
   }
 
+  .planet__moon-orbit {
+    inset: -0.45rem;
+  }
+
+  .planet__moon {
+    width: 0.5rem;
+    height: 0.5rem;
+    margin: -0.25rem 0 0 1.45rem;
+  }
+
   .planet__ring {
     top: 1.75rem;
     width: 6.1rem;
@@ -526,7 +584,8 @@
 
 /* --- Intro sequence --- */
 
-.intro-burst {
+.intro-burst,
+.solar-flare {
   position: absolute;
   inset: 0;
   z-index: 4;
@@ -930,6 +989,10 @@ body.is-about .project-card {
   .planet.is-pulse .planet__body,
   .planet.is-pulse .planet__body::after,
   .planet[data-theme='gs'] .planet__body {
+    animation: none;
+  }
+
+  .planet__moon-orbit {
     animation: none;
   }
 
