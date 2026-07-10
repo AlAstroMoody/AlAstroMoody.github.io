@@ -33,6 +33,7 @@ export const projects = [
     theme: 'weather',
     orbit: 'inner',
     angle: 240,
+    rings: true,
   },
   {
     id: 'budget',

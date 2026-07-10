@@ -43,7 +43,7 @@ function createCanvas(container) {
   return { canvas, ctx: canvas.getContext('2d'), rect };
 }
 
-function playFlash(container) {
+export function playFlash(container) {
   return new Promise((resolve) => {
     const { canvas, ctx } = createCanvas(container);
     const { cx, cy, orbitSize } = getCenter(container);
@@ -132,7 +132,6 @@ function hexToRgb(hex) {
 
 function landPlanet(planetEl) {
   planetEl.classList.add('is-intro-landed');
-  planetEl.style.setProperty('--radius-scale', '1');
 
   const id = planetEl.dataset.id;
   if (!id) return;

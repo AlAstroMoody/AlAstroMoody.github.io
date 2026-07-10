@@ -3,6 +3,8 @@ import { initOrbit, renderProjectList, setTheme, applyHashTheme } from './orbit.
 import { initBackground } from './background.js';
 import { setProjectFx, FX_PROJECTS } from './fx/index.js';
 import { playIntro } from './intro.js';
+import { initAbout } from './about.js';
+import { initComet } from './comet.js';
 
 const planetsEl = document.getElementById('planets');
 const listEl = document.getElementById('projects-list');
@@ -42,6 +44,9 @@ const orbit = initOrbit(planetsEl, projects, {
 renderProjectList(listEl, projects, {
   onHover: showProject,
 });
+
+initAbout(orbitSystemEl);
+initComet();
 
 function syncCards(activeId) {
   document.querySelectorAll('.project-card').forEach((card) => {

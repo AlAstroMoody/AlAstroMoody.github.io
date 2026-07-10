@@ -44,6 +44,65 @@ export function initBackground(canvas) {
     return a + (b - a) * t;
   }
 
+  let meteors = [];
+  let nextMeteorAt = performance.now() + 1500;
+
+  function spawnMeteor(now) {
+    const goingRight = Math.random() > 0.35;
+    const angle = (goingRight ? 0.35 : Math.PI - 0.35) + (Math.random() - 0.5) * 0.25;
+    const speed = 6 + Math.random() * 5;
+
+    meteors.push({
+      x: Math.random() * width,
+      y: -20 + Math.random() * height * 0.35,
+      vx: Math.cos(angle) * speed,
+      vy: Math.abs(Math.sin(angle)) * speed * 0.6 + 2,
+      len: 60 + Math.random() * 90,
+      life: 1,
+      decay: 0.008 + Math.random() * 0.006,
+    });
+
+    nextMeteorAt = now + 2500 + Math.random() * 6500;
+  }
+
+  function drawMeteors(now, rgb) {
+    if (now >= nextMeteorAt && meteors.length < 3) spawnMeteor(now);
+
+    for (let i = meteors.length - 1; i >= 0; i--) {
+      const m = meteors[i];
+      m.x += m.vx;
+      m.y += m.vy;
+      m.life -= m.decay;
+
+      if (m.life <= 0 || m.y > height + m.len || m.x < -m.len || m.x > width + m.len) {
+        meteors.splice(i, 1);
+        continue;
+      }
+
+      const norm = Math.hypot(m.vx, m.vy);
+      const tx = m.x - (m.vx / norm) * m.len;
+      const ty = m.y - (m.vy / norm) * m.len;
+      const fade = Math.min(1, m.life * 2);
+
+      const grad = ctx.createLinearGradient(m.x, m.y, tx, ty);
+      grad.addColorStop(0, `rgba(255, 255, 255, ${fade * 0.9})`);
+      grad.addColorStop(0.25, `rgba(${rgb}, ${fade * 0.55})`);
+      grad.addColorStop(1, `rgba(${rgb}, 0)`);
+
+      ctx.beginPath();
+      ctx.moveTo(m.x, m.y);
+      ctx.lineTo(tx, ty);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, 1.6, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 255, 255, ${fade * 0.9})`;
+      ctx.fill();
+    }
+  }
+
   function tickColor() {
     currentColor.r = lerp(currentColor.r, targetColor.r, 0.04);
     currentColor.g = lerp(currentColor.g, targetColor.g, 0.04);
@@ -82,6 +141,10 @@ export function initBackground(canvas) {
       ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(${rgb}, ${p.alpha})`;
       ctx.fill();
+    }
+
+    if (!reducedMotion) {
+      drawMeteors(performance.now(), rgb);
     }
   }
 

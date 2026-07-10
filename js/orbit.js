@@ -33,9 +33,14 @@ export function initOrbit(planetsEl, projects, { onSelect }) {
     planet.style.setProperty('--float-delay', `${index * 0.4}s`);
     planet.style.setProperty('--planet-color', colors.color);
     planet.style.setProperty('--planet-glow', colors.glow);
+    planet.style.setProperty('--band-angle', `${((index * 47) % 130) - 55}deg`);
+    planet.style.setProperty('--spin-duration', `${18 + (index % 4) * 7}s`);
+
+    const ring = project.rings ? '<span class="planet__ring" aria-hidden="true"></span>' : '';
 
     planet.innerHTML = `
       <a class="planet__link" href="${project.url}" data-id="${project.id}">
+        ${ring}
         <span class="planet__body" aria-hidden="true"></span>
         <span class="planet__label">${project.shortTitle}</span>
         <span class="visually-hidden">${project.title}: ${project.description}</span>

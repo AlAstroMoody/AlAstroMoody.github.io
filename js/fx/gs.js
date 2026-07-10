@@ -113,21 +113,21 @@ function createSeedSteps() {
 function frame() {
   if (!running) return;
 
-  rafId = requestAnimationFrame(frame);
-
-  if (performance.now() - lastTime < FRAME_INTERVAL) return;
+  if (performance.now() - lastTime < FRAME_INTERVAL) {
+    rafId = requestAnimationFrame(frame);
+    return;
+  }
 
   iterations += 1;
   prevSteps = steps;
   steps = [];
   lastTime = performance.now();
 
-  if (!prevSteps.length) {
-    restartGrowth();
-    return;
-  }
+  // Рост завершён: оставляем картинку и не перезапускаем цикл
+  if (!prevSteps.length) return;
 
   prevSteps.forEach((fn) => fn());
+  rafId = requestAnimationFrame(frame);
 }
 
 function restartGrowth() {
@@ -137,6 +137,9 @@ function restartGrowth() {
   prevSteps = [];
   steps = createSeedSteps();
   lastTime = performance.now();
+
+  cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(frame);
 }
 
 function handleResize() {
@@ -165,7 +168,6 @@ export function startGsFX(targetCanvas) {
 
   running = true;
   restartGrowth();
-  rafId = requestAnimationFrame(frame);
 }
 
 export function stopGsFX() {

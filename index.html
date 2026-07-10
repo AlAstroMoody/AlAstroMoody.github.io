@@ -63,10 +63,14 @@
         <h1 id="orbit-title" class="visually-hidden">Проекты AlAstroMoody</h1>
 
         <div class="orbit-system" id="orbit-system">
-          <div class="hub" aria-hidden="true">
-            <div class="hub__core"></div>
-            <div class="hub__ring hub__ring--1"></div>
-            <div class="hub__ring hub__ring--2"></div>
+          <div class="hub">
+            <div class="hub__ring hub__ring--1" aria-hidden="true"></div>
+            <div class="hub__ring hub__ring--2" aria-hidden="true"></div>
+            <button class="hub__button" id="about-button" type="button" aria-expanded="false" aria-controls="about-panel">
+              <span class="hub__core" aria-hidden="true"></span>
+              <span class="hub__label" aria-hidden="true">about</span>
+              <span class="visually-hidden">Обо мне</span>
+            </button>
           </div>
 
           <div class="orbit-rings" aria-hidden="true">
@@ -75,6 +79,16 @@
           </div>
 
           <nav class="planets" id="planets" aria-label="Навигация по проектам"></nav>
+
+          <div class="about-panel" id="about-panel" role="dialog" aria-labelledby="about-title">
+            <button class="about-panel__close" type="button" aria-label="Закрыть">&#10005;</button>
+            <h2 class="about-panel__title" id="about-title">AlAstroMoody</h2>
+            <p class="about-panel__text">Всем привет, я AlAstroMoody :) Люблю фронтенд и иногда делаю пет-проекты на интересные мне темы — пробую новые технологии и то, чему нет места в работе.</p>
+            <div class="about-panel__links">
+              <a class="about-panel__link" href="https://t.me/AlAstroMoody" target="_blank" rel="noopener">@AlAstroMoody</a>
+              <a class="about-panel__link" href="https://github.com/AlAstroMoody" target="_blank" rel="noopener">GitHub</a>
+            </div>
+          </div>
         </div>
       </section>
     </div>

@@ -68,7 +68,7 @@ export async function startWeatherFX(targetCanvas) {
 
   weatherFx = new WeatherFXClass({
     canvas,
-    background: `${WEATHER_BASE}/rain.webp`,
+    background: `./images/rain.webp`,
   });
 
   window.addEventListener('resize', handleResize);
