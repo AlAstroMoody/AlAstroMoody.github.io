@@ -269,6 +269,13 @@ export function playIntro(orbitSystemEl) {
       document.body.classList.add('is-intro-settling');
       await playSpiralFormation(orbitSystemEl, planets);
 
+      // Даём браузеру отрисовать последние «приземления», пока ещё идёт settling:
+      // иначе прыжок --radius-scale 0 → 1 попадёт под transition из is-intro-done,
+      // и планета уедет на место из центра, а не появится из точки
+      await new Promise((r) => {
+        requestAnimationFrame(() => requestAnimationFrame(r));
+      });
+
       document.body.classList.remove('is-intro', 'is-intro-burst', 'is-intro-settling');
       document.body.classList.add('is-intro-done');
       revealAllCards();

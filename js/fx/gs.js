@@ -99,11 +99,11 @@ function branchStep(x, y, rad) {
 function createSeedSteps() {
   updateOrigin();
 
-  const count = canvasWidth < 500 ? 4 : 8;
+  const count = canvasWidth < 500 ? 2 : 3;
   const seeds = [];
 
   for (let i = 0; i < count; i++) {
-    const rad = ((Math.PI * 2) / count) * i + (random() - 0.5) * 0.35;
+    const rad = ((Math.PI * 2) / count) * i + (random() - 0.5) * 0.6;
     seeds.push(() => branchStep(originX, originY, rad));
   }
 

@@ -1,6 +1,5 @@
 const FRAME_INTERVAL = 1000 / 30;
 const LIVE_TICK_MS = 200;
-const BG = '#08080f';
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -115,8 +114,7 @@ function drawHLine(g, row) {
 
 function clearCellInterior(g, col, row) {
   const { x, y, w, h } = cellRect(g, col, row);
-  ctx.fillStyle = BG;
-  ctx.fillRect(x + 1, y + 1, w - 2, h - 2);
+  ctx.clearRect(x + 1, y + 1, w - 2, h - 2);
 }
 
 function drawCellFill(g, col, row, positive) {

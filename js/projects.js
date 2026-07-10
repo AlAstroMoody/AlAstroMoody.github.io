@@ -55,7 +55,7 @@ export const projects = [
     tags: ['WC3', 'Craft'],
     theme: 'gs',
     orbit: 'outer',
-    angle: 102,
+    angle: 254,
   },
   {
     id: 'pwa-magic',
@@ -77,6 +77,6 @@ export const projects = [
     tags: ['WC3', 'Catalog'],
     theme: 'tcom',
     orbit: 'outer',
-    angle: 246,
+    angle: 102,
   },
 ];

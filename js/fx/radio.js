@@ -117,8 +117,6 @@ function drawRadial(context, data, cx, cy) {
 function drawStatic() {
   updateCenter();
   fillSyntheticData(performance.now());
-  ctx.fillStyle = 'rgba(8, 8, 15, 0.35)';
-  ctx.fillRect(0, 0, width, height);
   drawRadial(ctx, dataArray, centerX, centerY);
 }
 
@@ -132,8 +130,12 @@ function frame(now) {
   updateCenter();
   fillSyntheticData(now);
 
-  ctx.fillStyle = 'rgba(8, 8, 15, 0.22)';
+  // Гасим прошлые кадры в прозрачность, а не в чёрный — под канвасом видно звёздный фон
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
   ctx.fillRect(0, 0, width, height);
+  ctx.globalCompositeOperation = 'source-over';
+
   drawRadial(ctx, dataArray, centerX, centerY);
 }
 

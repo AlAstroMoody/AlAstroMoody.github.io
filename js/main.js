@@ -14,6 +14,9 @@ const bgCanvas = document.getElementById('bg');
 const bg = initBackground(bgCanvas);
 let activeProjectId = null;
 
+// FX, которые рисуют собственный непрозрачный фон — под ними звёзды не нужны
+const FX_OPAQUE = new Set(['weather']);
+
 function showProject(id) {
   const project = projects.find((p) => p.id === id);
   if (!project || id === activeProjectId) return;
@@ -23,12 +26,20 @@ function showProject(id) {
   setTheme(project.theme);
 
   if (FX_PROJECTS.has(project.id)) {
-    bg.pause();
     document.body.classList.add('fx-active');
+
+    if (FX_OPAQUE.has(project.id)) {
+      bg.pause();
+      document.body.classList.add('fx-opaque');
+    } else {
+      bg.setTheme(project.theme);
+      bg.resume();
+      document.body.classList.remove('fx-opaque');
+    }
   } else {
     bg.setTheme(project.theme);
     bg.resume();
-    document.body.classList.remove('fx-active', 'fx-ready');
+    document.body.classList.remove('fx-active', 'fx-ready', 'fx-opaque');
   }
 
   setProjectFx(project.id);

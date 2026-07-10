@@ -11,6 +11,9 @@ const THEME_COLORS = {
 };
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Устройства без ховера (телефоны, планшеты): тап по планете только выбирает
+// проект и запускает его анимацию, а сайт открывается по карточке
+const touchOnly = matchMedia('(hover: none)').matches;
 
 function pulsePlanet(planet) {
   if (!planet || reducedMotion) return;
@@ -51,6 +54,13 @@ export function initOrbit(planetsEl, projects, { onSelect }) {
 
     link.addEventListener('mouseenter', () => onSelect?.(project.id));
     link.addEventListener('focus', () => onSelect?.(project.id));
+
+    if (touchOnly) {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        onSelect?.(project.id);
+      });
+    }
 
     fragment.appendChild(planet);
   });
