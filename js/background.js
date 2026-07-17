@@ -1,3 +1,5 @@
+import { getViewportSize } from './viewport.js';
+
 const THEME_PARTICLES = {
   default: { r: 99, g: 102, b: 241 },
   poe: { r: 201, g: 162, b: 39 },
@@ -24,8 +26,13 @@ export function initBackground(canvas) {
   let paused = false;
 
   function resize() {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
+    const size = getViewportSize();
+    width = size.width;
+    height = size.height;
+    canvas.width = width;
+    canvas.height = height;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
     const count = reducedMotion ? 40 : Math.min(120, Math.floor(width * height / 12000));
     particles = Array.from({ length: count }, () => createParticle());
     constellations = [];

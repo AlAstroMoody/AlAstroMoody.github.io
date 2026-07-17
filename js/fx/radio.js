@@ -1,3 +1,5 @@
+import { getViewportSize } from '../viewport.js';
+
 const BAR_COUNT = 180;
 const BUFFER_LENGTH = 64;
 const FRAME_INTERVAL = 1000 / 30;
@@ -16,18 +18,30 @@ let centerX = 0;
 let centerY = 0;
 let innerRadius = 48;
 let resizeHandler = null;
+let layoutHandler = null;
+let planetBody = null;
 let lastTime = 0;
 let phase = 0;
 
+let lastDrawX = NaN;
+let lastDrawY = NaN;
+let lastDrawRadius = NaN;
+
 const dataArray = new Uint8Array(BUFFER_LENGTH);
 
+function getPlanetBody() {
+  if (planetBody?.isConnected) return planetBody;
+  planetBody = document.querySelector(`.planet[data-id="${PROJECT_ID}"] .planet__body`);
+  return planetBody;
+}
+
 function updateCenter() {
-  const body = document.querySelector(`.planet[data-id="${PROJECT_ID}"] .planet__body`);
+  const body = getPlanetBody();
   if (body) {
     const rect = body.getBoundingClientRect();
     centerX = rect.left + rect.width / 2;
     centerY = rect.top + rect.height / 2;
-    innerRadius = Math.max(rect.width, rect.height) * 0.52;
+    innerRadius = Math.min(rect.width, rect.height) / 2;
     return;
   }
 
@@ -58,17 +72,19 @@ function resize() {
   if (!canvas) return;
 
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  width = window.innerWidth;
-  height = window.innerHeight;
+  const size = getViewportSize();
+  width = size.width;
+  height = size.height;
 
-  canvas.width = width * dpr;
-  canvas.height = height * dpr;
-  canvas.style.width = '100%';
-  canvas.style.height = '100%';
+  canvas.width = Math.round(width * dpr);
+  canvas.height = Math.round(height * dpr);
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
 
   ctx = canvas.getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+  resetDrawAnchor();
   updateCenter();
 }
 
@@ -114,29 +130,81 @@ function drawRadial(context, data, cx, cy) {
   }
 }
 
+function centerMoved() {
+  if (Number.isNaN(lastDrawX)) return false;
+  const moved = Math.hypot(centerX - lastDrawX, centerY - lastDrawY) > 1;
+  const resized = Math.abs(innerRadius - lastDrawRadius) > 0.5;
+  return moved || resized;
+}
+
+function markDrawn() {
+  lastDrawX = centerX;
+  lastDrawY = centerY;
+  lastDrawRadius = innerRadius;
+}
+
+function resetDrawAnchor() {
+  lastDrawX = NaN;
+  lastDrawY = NaN;
+  lastDrawRadius = NaN;
+}
+
 function drawStatic() {
   updateCenter();
   fillSyntheticData(performance.now());
   drawRadial(ctx, dataArray, centerX, centerY);
+  markDrawn();
+}
+
+function onLayoutChange() {
+  const { width: nextWidth, height: nextHeight } = getViewportSize();
+  if (nextWidth !== width || nextHeight !== height) {
+    resize();
+    return;
+  }
+  updateCenter();
+}
+
+function bindLayoutTracking() {
+  layoutHandler = onLayoutChange;
+  window.addEventListener('scroll', layoutHandler, { passive: true });
+  window.visualViewport?.addEventListener('resize', layoutHandler);
+  window.visualViewport?.addEventListener('scroll', layoutHandler);
+}
+
+function unbindLayoutTracking() {
+  if (!layoutHandler) return;
+  window.removeEventListener('scroll', layoutHandler);
+  window.visualViewport?.removeEventListener('resize', layoutHandler);
+  window.visualViewport?.removeEventListener('scroll', layoutHandler);
+  layoutHandler = null;
 }
 
 function frame(now) {
   if (!running) return;
 
   rafId = requestAnimationFrame(frame);
+  updateCenter();
+
+  if (centerMoved() && ctx) {
+    ctx.clearRect(0, 0, width, height);
+  }
+
   if (now - lastTime < FRAME_INTERVAL) return;
   lastTime = now;
 
-  updateCenter();
   fillSyntheticData(now);
 
-  // Гасим прошлые кадры в прозрачность, а не в чёрный — под канвасом видно звёздный фон
-  ctx.globalCompositeOperation = 'destination-out';
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
-  ctx.fillRect(0, 0, width, height);
-  ctx.globalCompositeOperation = 'source-over';
+  // При смещении планеты не оставляем «хвосты» от старого центра
+  if (!centerMoved()) {
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+    ctx.fillRect(0, 0, width, height);
+    ctx.globalCompositeOperation = 'source-over';
+  }
 
   drawRadial(ctx, dataArray, centerX, centerY);
+  markDrawn();
 }
 
 export function startRadioFX(targetCanvas) {
@@ -148,6 +216,7 @@ export function startRadioFX(targetCanvas) {
 
   resizeHandler = resize;
   window.addEventListener('resize', resizeHandler);
+  bindLayoutTracking();
 
   if (reducedMotion) {
     drawStatic();
@@ -167,6 +236,10 @@ export function stopRadioFX() {
     window.removeEventListener('resize', resizeHandler);
     resizeHandler = null;
   }
+
+  unbindLayoutTracking();
+  planetBody = null;
+  resetDrawAnchor();
 
   if (ctx && canvas) {
     ctx.clearRect(0, 0, width, height);

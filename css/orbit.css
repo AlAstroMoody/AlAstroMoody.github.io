@@ -17,7 +17,7 @@
 }
 
 .orbit-system {
-  --orbit-size: min(96vw, 22rem);
+  --orbit-size: min(96%, 22rem);
   position: relative;
   width: var(--orbit-size);
   aspect-ratio: 1;

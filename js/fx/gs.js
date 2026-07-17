@@ -1,3 +1,5 @@
+import { getViewportSize } from '../viewport.js';
+
 const r15 = Math.PI / 12;
 const { random } = Math;
 const FRAME_INTERVAL = 1000 / 30;
@@ -63,8 +65,8 @@ function initCanvas(target, width, height) {
 
   target.width = dpi * width;
   target.height = dpi * height;
-  target.style.width = '100%';
-  target.style.height = '100%';
+  target.style.width = `${width}px`;
+  target.style.height = `${height}px`;
   context.scale(dpi, dpi);
 
   return context;
@@ -145,9 +147,10 @@ function restartGrowth() {
 function handleResize() {
   if (!canvas) return;
 
-  ctx = initCanvas(canvas, window.innerWidth, window.innerHeight);
-  canvasWidth = window.innerWidth;
-  canvasHeight = window.innerHeight;
+  const size = getViewportSize();
+  ctx = initCanvas(canvas, size.width, size.height);
+  canvasWidth = size.width;
+  canvasHeight = size.height;
   updateOrigin();
   restartGrowth();
 }
@@ -158,9 +161,10 @@ export function startGsFX(targetCanvas) {
   if (!targetCanvas) return;
 
   canvas = targetCanvas;
-  ctx = initCanvas(canvas, window.innerWidth, window.innerHeight);
-  canvasWidth = window.innerWidth;
-  canvasHeight = window.innerHeight;
+  const size = getViewportSize();
+  ctx = initCanvas(canvas, size.width, size.height);
+  canvasWidth = size.width;
+  canvasHeight = size.height;
   updateOrigin();
 
   resizeHandler = handleResize;
